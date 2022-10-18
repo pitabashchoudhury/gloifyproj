@@ -1,13 +1,11 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'cubit/counter_cubit.dart';
 
 void main() {
+  final CounterCubit counterCubit = CounterCubit();
   runApp(BlocProvider(
-    create: (context) => CounterCubit(),
+    create: (context) => counterCubit,
     child: const MyApp(),
   ));
 }
@@ -31,7 +29,6 @@ class _MyAppState extends State<MyApp> {
             children: <Widget>[
               BlocBuilder<CounterCubit, CounterState>(
                 builder: (context, state) {
-                  print("Changing State value: ${state.value}");
                   return Text(
                     "${state.value}",
                     style: Theme.of(context).textTheme.headline3,
@@ -45,13 +42,13 @@ class _MyAppState extends State<MyApp> {
                     onPressed: () {
                       BlocProvider.of<CounterCubit>(context).decrement();
                     },
-                    child: Text("-"),
+                    child: const Text("-"),
                   ),
                   ElevatedButton(
                     onPressed: () {
                       BlocProvider.of<CounterCubit>(context).increment();
                     },
-                    child: Text("+"),
+                    child: const Text("+"),
                   ),
                 ],
               ),
