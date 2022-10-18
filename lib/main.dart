@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+// import 'controller/post.dart';
+import 'controller/post.dart';
 import 'cubit/counter_cubit.dart';
+import './data/post.dart' as global;
 
 void main() {
   final CounterCubit counterCubit = CounterCubit();
@@ -23,46 +27,33 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         body: Center(
-          child: Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            direction: Axis.vertical,
-            children: <Widget>[
-              BlocBuilder<CounterCubit, CounterState>(
-                builder: (context, state) {
-                  return Text(
-                    "${state.value}",
-                    style: Theme.of(context).textTheme.headline3,
-                  );
-                },
-              ),
-              Wrap(
-                spacing: 100,
-                children: <Widget>[
-                  ElevatedButton(
-                    onPressed: () {
-                      BlocProvider.of<CounterCubit>(context).decrement();
-                    },
-                    child: const Text("-"),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      BlocProvider.of<CounterCubit>(context).increment();
-                    },
-                    child: const Text("+"),
-                  ),
-                ],
-              ),
-              BlocBuilder<CounterCubit, CounterState>(
-                builder: (context, state) {
-                  if (state.value > 5) {
-                    return const Text("Yaay you had it");
-                  } else {
-                    return const Text("Trry more.....");
-                  }
-                },
-              ),
-            ],
-          ),
+          child: FutureBuilder(
+              future: AllPost().loadAllData(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data == true) {
+                  return ListView.builder(
+                      itemCount: global.myPost.length,
+                      itemBuilder: (context, index) {
+                        return Wrap(
+                          direction: Axis.vertical,
+                          children: <Widget>[
+                            Text(
+                              global.myPost[index].id.toString(),
+                              style: Theme.of(context).textTheme.caption,
+                            ),
+                            Text(
+                              global.myPost[index].title.toString(),
+                              style: Theme.of(context).textTheme.headline6,
+                            ),
+                          ],
+                        );
+                      });
+                } else if (snapshot.hasData && snapshot.data == false) {
+                  return const Text("no Data Found");
+                } else {
+                  return const CircularProgressIndicator();
+                }
+              }),
         ),
       ),
     );
